@@ -1,0 +1,41 @@
+.resgallery,
+.resgallery * {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+#container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.resgallery {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  top: 0;
+  left: 0; }
+  .resgallery .slide {
+    display: block;
+    width: 100%;
+    height: 100%; }
+    .resgallery .slide .slide-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%; }
+    .resgallery .slide img {
+      display: block;
+      margin: auto; }
+    .resgallery .slide.fit-width img {
+      width: 100%;
+      height: auto; }
+    .resgallery .slide.fit-height img {
+      height: 100%;
+      width: auto; }

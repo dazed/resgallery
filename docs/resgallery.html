@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>resgallery.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>resgallery.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*
+ResGallery
+*/</span>
+
+(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($, undefined)</span> </span>{
+<span class="hljs-pi">
+  "use strict"</span>;
+
+  <span class="hljs-keyword">var</span> ResGallery = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(element, options)</span> </span>{
+    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">this</span>.$el = $(element);
+    <span class="hljs-keyword">this</span>.state = {};
+    <span class="hljs-keyword">this</span>.slides = [];
+
+    <span class="hljs-keyword">this</span>.$el.on({
+      <span class="hljs-string">'cycle-post-initialize'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, cycleOpts)</span> </span>{
+        root._create(options, cycleOpts);
+        root.$el.trigger(<span class="hljs-string">'resgallery.init'</span>);
+      },
+      <span class="hljs-string">'cycle-after'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+        root._resize();
+        root.$el.trigger(<span class="hljs-string">'resgallery.after'</span>);
+      },
+      <span class="hljs-string">'cycle-before'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, opts, outSlide, inSlide, forward)</span> </span>{
+        
+        <span class="hljs-keyword">var</span> $imgs = opts.slides;
+        <span class="hljs-keyword">var</span> slideNum = $imgs.index(inSlide);
+
+        <span class="hljs-keyword">if</span> (root.options.preload) {
+
+          <span class="hljs-keyword">var</span> next = (!!$imgs.eq(slideNum + <span class="hljs-number">1</span>).length &amp;&amp; !$imgs.eq(slideNum + <span class="hljs-number">1</span>).children().length);
+          <span class="hljs-keyword">var</span> prev = (!!$imgs.eq(slideNum - <span class="hljs-number">1</span>).length &amp;&amp; !$imgs.eq(slideNum - <span class="hljs-number">1</span>).children().length);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p> Determine if incoming slide needs to be loaded</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (!$(inSlide).children().length) {
+            root._preload(slideNum);
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p> Determine if slide after needs to be loaded</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (next) {
+            root._preload(slideNum + <span class="hljs-number">1</span>);
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p> Determine if slide before needs to be loaded</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (prev) {
+            root._preload(slideNum - <span class="hljs-number">1</span>);
+          }
+
+        }
+
+        root.$el.trigger(<span class="hljs-string">'resgallery.before'</span>, [slideNum]);
+
+      }
+    });
+
+  };
+
+  ResGallery.DEFAULTS = {
+    image: <span class="hljs-string">'.img'</span>,
+    wrapper: <span class="hljs-string">'.slide-wrapper'</span>,
+    slide: <span class="hljs-string">'.slide'</span>,
+    preload: <span class="hljs-literal">false</span>,
+    center: <span class="hljs-literal">true</span>,
+    contents: <span class="hljs-literal">false</span>
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p> Private Methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  ResGallery.prototype._create = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(options, cycleOpts)</span> </span>{
+
+    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> prev = cycleOpts.currSlide - <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">var</span> next = cycleOpts.currSlide + <span class="hljs-number">1</span>;
+    root._resizing = _.throttle($.proxy(root._resize, root), <span class="hljs-number">10</span>);
+
+
+    <span class="hljs-keyword">if</span> (prev &lt; <span class="hljs-number">0</span>) {
+      prev = cycleOpts.slideCount-<span class="hljs-number">1</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (next &gt; cycleOpts.slideCount) {
+      next = <span class="hljs-number">0</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p> Merge Options with Defaults</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.options = $.extend(<span class="hljs-literal">true</span>, {}, ResGallery.DEFAULTS, options);
+
+    <span class="hljs-keyword">if</span> (root.options.preload) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p> Add current slide to slide collection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      root.slides[cycleOpts.currSlide] = root._slide(root.$el, <span class="hljs-literal">false</span>, cycleOpts.currSlide);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p> Load in previous slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      root._preload(prev);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p> Load in next slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      root._preload(next);
+
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p> Add in all slides to slide collection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt;= cycleOpts.slides.length; i++) {
+        <span class="hljs-keyword">var</span> $slide = $(cycleOpts.slides).eq(i);
+        root._slide($slide, <span class="hljs-literal">false</span>, i);
+        root._orientation(i);
+      }
+
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p> Bind orientation to window resize</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-built_in">window</span>).on(<span class="hljs-string">'resize'</span>, root._resizing).trigger(<span class="hljs-string">'resize'</span>);
+
+  };
+
+  <span class="hljs-comment">/**
+  * Destroy ResGallery instance and remove data
+  *
+  */</span>
+  ResGallery.prototype._destroy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+
+    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p> Remove resizing event</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-built_in">window</span>).off(<span class="hljs-string">'resize'</span>, root._resizing);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p> Remove classes from slides</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(root.options.slide).removeClass(<span class="hljs-string">'fit-height fit-width'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p> Remove styling from slide wrapper</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(root.options.wrapper).css(<span class="hljs-string">'marginTop'</span>, <span class="hljs-string">''</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p> Remove data from jQuery element(s)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    root.$el.removeData(<span class="hljs-string">'resgallery'</span>);
+
+  };
+
+  ResGallery.prototype._offset = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($el, containerHeight, i)</span> </span>{
+
+    <span class="hljs-keyword">var</span> slide = <span class="hljs-keyword">this</span>.slides[i];
+    <span class="hljs-keyword">var</span> orientation = <span class="hljs-keyword">this</span>.state.orientation;
+    <span class="hljs-keyword">var</span> offset = (orientation === <span class="hljs-string">'fit-width'</span>) ?
+          (containerHeight - slide.img.height()) / <span class="hljs-number">2</span> :
+          <span class="hljs-number">0</span>;
+
+    $el.find(<span class="hljs-keyword">this</span>.options.wrapper).css(<span class="hljs-string">'marginTop'</span>, offset);
+
+    <span class="hljs-keyword">return</span> offset;
+
+  };
+
+
+  <span class="hljs-comment">/**
+  * Determine orientation of image and browser
+  *
+  * @param $el {jQuery} Number of slide to load
+  * @return orientation {String} 'fit-width' or 'fit-height'
+  */</span>
+  ResGallery.prototype._orientation = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
+
+    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> $container = <span class="hljs-keyword">this</span>.$el;
+    <span class="hljs-keyword">var</span> $el = $($container.data(<span class="hljs-string">'cycle.opts'</span>).slides[i]);
+
+    <span class="hljs-keyword">if</span> (_.isEmpty(<span class="hljs-keyword">this</span>.slides[i])) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p> Keep ‘this’ context in check
+ <a href="https://github.com/jashkenas/underscore/issues/494">https://github.com/jashkenas/underscore/issues/494</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> _(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        root._orientation(i);
+      }).chain().bind(<span class="hljs-keyword">this</span>).delay(<span class="hljs-number">100</span>);
+    }
+
+    <span class="hljs-keyword">var</span> container = <span class="hljs-built_in">Math</span>.round(($container.width() / $container.height()) * <span class="hljs-number">100</span>) / <span class="hljs-number">100</span>;
+
+    <span class="hljs-keyword">var</span> orientation = (container &gt; <span class="hljs-keyword">this</span>.slides[i].ratio) ?
+      <span class="hljs-string">'fit-height'</span> :
+      <span class="hljs-string">'fit-width'</span>;
+
+    <span class="hljs-keyword">if</span> (orientation === <span class="hljs-string">'fit-height'</span>) {
+      $el.removeClass(<span class="hljs-string">'fit-width'</span>).addClass(<span class="hljs-string">'fit-height'</span>);
+    } <span class="hljs-keyword">else</span> {
+      $el.removeClass(<span class="hljs-string">'fit-height'</span>).addClass(<span class="hljs-string">'fit-width'</span>);
+    }
+
+    <span class="hljs-keyword">this</span>.state.orientation = orientation;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.center) {
+      <span class="hljs-keyword">this</span>._offset($el, $container.height(), i);
+    }
+
+    <span class="hljs-keyword">return</span> orientation;
+
+  };
+
+  <span class="hljs-comment">/**
+  * Preload slide for lighter DOM footprint
+  *
+  * @param i {Object} Number of slide to load
+  * @return this {jQuery} jQuery object
+  */</span>
+  ResGallery.prototype._preload = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(i)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p> Get placeholder element of slide
+ Get URL to fetch </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> $placeholder = <span class="hljs-keyword">this</span>.$el.data(<span class="hljs-string">'cycle.opts'</span>).slides.eq(i);
+    <span class="hljs-keyword">var</span> url = $placeholder.data(<span class="hljs-string">'url'</span>);
+
+    <span class="hljs-keyword">var</span> slide;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p> Retrieve data for slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $.ajax({
+      url: url
+    }).success(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p> Create slide</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> slide = root._slide(data, i);
+      <span class="hljs-keyword">var</span> $img = slide.wrapper;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p> Empty placeholder element and insert slide data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $placeholder.empty().append($img);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p> Set orientation for item</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      root._orientation(i);
+
+    });
+
+   <span class="hljs-keyword">return</span> slide;
+
+  };
+
+  ResGallery.prototype._resize = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p> Determine orientation for current image</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> cycle = <span class="hljs-keyword">this</span>.$el.data(<span class="hljs-string">'cycle.opts'</span>);
+      <span class="hljs-keyword">this</span>._orientation(cycle.currSlide);
+      <span class="hljs-keyword">this</span>.$el.trigger(<span class="hljs-string">'resgallery.resize'</span>);
+
+    };
+
+  <span class="hljs-comment">/**
+  * Create slide
+  *
+  * @param data {String} HTML String to be wrapped in jQuery
+  * @param i {Number} Slide number being processed
+  * @return this {jQuery} jQuery object
+  */</span>
+  ResGallery.prototype._slide = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data, i)</span> </span>{
+
+    <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> $data = $(data);
+    <span class="hljs-keyword">var</span> $slide = (<span class="hljs-keyword">this</span>.options.preload) ?
+          $data.find(<span class="hljs-keyword">this</span>.options.wrapper).closest(<span class="hljs-keyword">this</span>.options.slide) :
+          $data;
+
+    <span class="hljs-keyword">var</span> $img = $slide.find(<span class="hljs-keyword">this</span>.options.image);
+    <span class="hljs-keyword">var</span> slide = {
+      $el: $slide,
+      img: $slide.find(<span class="hljs-keyword">this</span>.options.image),
+      wrapper: $slide.find(<span class="hljs-keyword">this</span>.options.wrapper),
+      width: $img.attr(<span class="hljs-string">'width'</span>),
+      height: $img.attr(<span class="hljs-string">'height'</span>),
+      ratio: <span class="hljs-built_in">Math</span>.round(($img.attr(<span class="hljs-string">'width'</span>) / $img.attr(<span class="hljs-string">'height'</span>))*<span class="hljs-number">100</span>)/<span class="hljs-number">100</span>
+    };
+      
+    <span class="hljs-keyword">var</span> customSlide = $slide.data(<span class="hljs-string">'slide-layout'</span>);
+
+    <span class="hljs-keyword">if</span> (!_.isUndefined(customSlide)) {
+      slide = (root.options.contents.hasOwnProperty(customSlide) &amp;&amp; _.isFunction(root.options.contents.customSlide)) ?
+        <span class="hljs-keyword">this</span>.options.contents[customSlide].apply(root.$el, [slide, data, i]) :
+        slide;
+    }
+
+    <span class="hljs-keyword">this</span>.slides[i] = slide;
+
+    <span class="hljs-keyword">return</span> slide;
+
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p> Public Methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  ResGallery.prototype.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">this</span>._destroy();
+  };
+
+  ResGallery.prototype.resize = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">this</span>._resize();
+  };
+
+  <span class="hljs-comment">/**
+  * Add ResGallery to jQuery function
+  *
+  * @param options {Object} Options for initialization
+  * @return this {jQuery} jQuery object
+  */</span>
+  $.fn.resgallery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">resgallery</span><span class="hljs-params">(options)</span> </span>{
+    
+    <span class="hljs-keyword">var</span> thisCall = <span class="hljs-keyword">typeof</span> options;
+    <span class="hljs-keyword">switch</span> (thisCall) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p> Call upon a method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">case</span> <span class="hljs-string">'string'</span>:
+        <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">this</span>.each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">var</span> instance = $.data(<span class="hljs-keyword">this</span>, <span class="hljs-string">'resgallery'</span>);
+          <span class="hljs-keyword">if</span> (!instance) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          }
+          <span class="hljs-keyword">if</span> (!$.isFunction(instance[options]) || options.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">"_"</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          }
+          instance[options].apply(instance, args);
+        });
+        <span class="hljs-keyword">break</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p> Create new instance of plugin or update options</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">case</span> <span class="hljs-string">'object'</span>:
+        <span class="hljs-keyword">this</span>.each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">var</span> instance = $.data(<span class="hljs-keyword">this</span>, <span class="hljs-string">'resgallery'</span>);
+          <span class="hljs-keyword">if</span> (instance) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>update options of current instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            instance.update(options);
+          } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>initialize new instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            instance = <span class="hljs-keyword">new</span> ResGallery(<span class="hljs-keyword">this</span>, options);
+            $.data(<span class="hljs-keyword">this</span>, <span class="hljs-string">'resgallery'</span>, instance);
+          }
+        });
+
+        <span class="hljs-keyword">break</span>;
+
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p> Return ‘this’ for jQuery chainability</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p> AMD Compatibility</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define(<span class="hljs-string">'resgallery'</span>, [], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">return</span> $.fn.resgallery;
+    });
+  }
+
+})(jQuery);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

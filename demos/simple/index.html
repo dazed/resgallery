@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+
+<head>
+  
+  <title>ResGallery demo</title>
+  
+  <link rel="stylesheet" href="../../resgallery.css" />
+  <style>
+  * {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  #container {
+    padding-bottom: 33px;
+  }
+
+  #control-bar {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 9999;
+  }
+
+  #menu {
+    padding: 0;
+    margin: 0;
+  }
+
+  .btn {
+    text-align: center;
+    display: block;
+    width: 100px;
+    float: right;
+    border: 0;
+    padding: 10px;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    border-left: 1px solid #fff;
+    height: 100%;
+  }
+
+  .btn:focus {
+    outline: 0;
+  }
+
+  .btn:hover {
+    background-color: #323232;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .block {
+    width: 400px;
+    height: 200px;
+    margin: 0 auto;
+  }
+
+  .custom-slide {
+    margin: 0 auto;
+  }
+
+  .custom-slide .block {
+    width: 400px;
+    height: 200px;
+  }
+
+  .custom-slide2 {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+  }
+
+  .custom-slide2 .block {
+    height: 50%;
+    width: 200px;
+  }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <div id="container">
+
+    <div id="gallery" class="resgallery">
+      
+      <div class="slide" data-url="index.html">
+        <div class="slide-wrapper">
+          <img src="img1.jpg" alt="" class="img" width="1024" height="679" />
+        </div>
+      </div>
+
+      <div class="slide" data-url="index2.html"></div>
+
+      <div class="slide" data-url="index3.html"></div>
+
+      <div class="slide" data-url="index4.html"></div>
+
+      <div class="slide" data-url="index5.html"></div>
+
+      <div class="slide" data-url="index6.html"></div>
+
+      <div class="slide" data-url="index7.html"></div>
+
+    </div>
+
+  </div>
+
+  <section id="control-bar">
+
+    <menu id="menu">
+      <button class="btn" id="next">Next</button>
+      <button class="btn" id="prev">Previous</button>
+      <button class="btn" id="destroy">Destroy</button>
+      <button class="btn hidden" id="init">Initialize</button>
+    </menu>
+
+  </section>
+
+  <script src="../../bower_components/jquery/jquery.min.js"></script>
+  <script src="../../bower_components/underscore/underscore.js"></script>
+  <script src="../../bower_components/imagesloaded/imagesloaded.pkgd.js"></script>
+  <script src="../../bower_components/jquery-cycle2/build/jquery.cycle2.min.js"></script>
+  <script src="../../resgallery.js"></script>
+
+  <script>
+  $(document).on('ready', function() {
+
+    var gallery = $('#gallery')
+      .resgallery({
+        center: true,
+        preload: true,
+        contents: {
+          trill: function(defaultSlide, data, i) {
+            console.log('trill');
+            var slide = defaultSlide;
+            slide.$el = slide.wrapper.find('.custom-slide');
+            slide.img = slide.$el;
+            slide.width = 400;
+            slide.height = 200;
+            return slide;
+          },
+          triller: function(defaultSlide, data, i) {
+            console.log('triller');
+            var slide = defaultSlide;
+            slide.$el = slide.wrapper.find('.custom-slide2');
+            slide.img = slide.$el;
+            slide.width = 200;
+            slide.height = 400;
+            return slide;
+          }
+        }
+      })
+      .cycle({
+        timeout: 0,
+        slides: '.slide',
+        prev: '#prev',
+        next: '#next'
+      });
+
+      $('#destroy').on('click', function(e) {
+        e.preventDefault();
+        $('#gallery').resgallery('destroy');
+      });
+    
+
+  });
+  </script>
+
+</body>
+
+</html>

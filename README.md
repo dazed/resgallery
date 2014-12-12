@@ -8,7 +8,7 @@ First, you'll need to install all node modules. Go to the folder you have ResGal
 Next, you'll need to install the bower compenents.
 ``` bower install```
 
-Now, run grunt.
+Now, run the demo.
 ```grunt```
 
 Open your browser to http://localhost:8000/demos/simple/
@@ -76,7 +76,6 @@ contents: {
 
 ### To run a demo ###
 ```grunt```
-Open your browser to http://localhost:8000/demos/simple/
 
 
 ### To JSHint ###

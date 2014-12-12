@@ -8,8 +8,8 @@ First, you'll need to install all node modules. Go to the folder you have ResGal
 Next, you'll need to install the bower compenents.
 ``` bower install```
 
-Now, run the demo.
-```python -m SimpleHTTPServer```
+Now, run grunt.
+```grunt```
 
 Open your browser to http://localhost:8000/demos/simple/
 
@@ -75,7 +75,8 @@ contents: {
 * [underscore.js](http://underscorejs.org/)
 
 ### To run a demo ###
-```python -m SimpleHTTPServer 8000```
+```grunt```
+Open your browser to http://localhost:8000/demos/simple/
 
 
 ### To JSHint ###

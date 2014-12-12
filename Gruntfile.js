@@ -5,6 +5,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     
+    connect: {
+      example: {
+        port: 8000,
+        directory: 'demos'
+      }
+    },
+
     jshint: {
       all: ['resgallery.js'],
 
@@ -44,9 +51,10 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default',['watch']);
+  grunt.registerTask('default',['connect', 'watch']);
 
 };

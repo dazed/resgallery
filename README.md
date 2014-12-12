@@ -11,7 +11,7 @@ Next, you'll need to install the bower compenents.
 Now, run the demo.
 ```grunt```
 
-Open your browser to http://localhost:8000/demos/simple/
+Open your browser to http://0.0.0.0:8000/demos/simple/
 
 ## Sample Markup ##
 ```

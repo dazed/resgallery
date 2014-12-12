@@ -75,7 +75,8 @@ contents: {
 * [underscore.js](http://underscorejs.org/)
 
 ### To run a demo ###
-```grunt```
+``` grunt ```  
+Open your browser to http://0.0.0.0:8000/demos/simple/
 
 
 ### To JSHint ###

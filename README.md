@@ -3,13 +3,13 @@ A jQuery plugin to make your content fit as much space as possible.
 
 ## Quick Start ##
 First, you'll need to install all node modules. Go to the folder you have ResGallery installed in via the command line, and then input...
-```npm install```
+``` npm install ```
 
 Next, you'll need to install the bower compenents.
-``` bower install```
+``` bower install ```
 
 Now, run the demo.
-```grunt```
+``` grunt ```
 
 Open your browser to http://0.0.0.0:8000/demos/simple/
 
@@ -75,7 +75,8 @@ contents: {
 * [underscore.js](http://underscorejs.org/)
 
 ### To run a demo ###
-```grunt```
+``` grunt ```  
+Open your browser to http://0.0.0.0:8000/demos/simple/
 
 
 ### To JSHint ###

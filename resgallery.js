@@ -82,7 +82,6 @@ ResGallery
     var next = cycleOpts.currSlide + 1;
     root._resizing = _.throttle($.proxy(root._resize, root), 10);
 
-
     if (prev < 0) {
       prev = cycleOpts.slideCount-1;
     }
@@ -171,9 +170,17 @@ ResGallery
   */
   ResGallery.prototype._orientation = function(i) {
 
+
     var root = this;
     var $container = this.$el;
     var $el = $($container.data('cycle.opts').slides[i]);
+
+    //  If object-fit is available via CSS
+    //    and this slide is not a custom slide
+    //    no need to determine orientation
+    if (Modernizr['object-fit'] && !$container.data('resgallery').slides[i].custom) {
+      return false;
+    }
 
     if (_.isEmpty(this.slides[i])) {
       //  Keep 'this' context in check
@@ -274,6 +281,7 @@ ResGallery
     var $img = $slide.find(this.options.image);
     var slide = {
       $el: $slide,
+      custom: false,
       img: $img,
       wrapper: $slide.find(this.options.wrapper),
       width: $img.attr('width'),
@@ -289,6 +297,8 @@ ResGallery
       slide = (root.options.contents.hasOwnProperty(customSlide) && _.isFunction(root.options.contents[customSlide])) ?
         this.options.contents[customSlide].apply(root.$el, [slide, data, i]) :
         slide;
+
+      slide.custom = true;
     }
 
     this.slides[i] = slide;

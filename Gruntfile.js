@@ -26,25 +26,28 @@ module.exports = function(grunt) {
           jQuery: true,
           _: true,
           console: true,
-          define: true
+          define: true,
+          Modernizr: true
         }
       }
 
     },
 
     sass: {
-      options: {
-        style: 'expanded'
-      },
-      files: {
-        'resgallery.css' : 'resgallery.scss'
+      dev: {
+        options: {
+          style: 'expanded'
+        },
+        files: {
+          'resgallery.css' : 'resgallery.scss'
+        }
       }
     },
 
     watch: {
       css: {
         files: '*.scss',
-        tasks: ['sass']
+        tasks: ['sass:dev']
       }
     }
 

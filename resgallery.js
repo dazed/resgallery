@@ -175,19 +175,19 @@ ResGallery
     var $container = this.$el;
     var $el = $($container.data('cycle.opts').slides[i]);
 
-    //  If object-fit is available via CSS
-    //    and this slide is not a custom slide
-    //    no need to determine orientation
-    if (Modernizr['object-fit'] && !$container.data('resgallery').slides[i].custom) {
-      return false;
-    }
-
     if (_.isEmpty(this.slides[i])) {
       //  Keep 'this' context in check
       //  https://github.com/jashkenas/underscore/issues/494
       return _(function () {
         root._orientation(i);
       }).chain().bind(this).delay(100);
+    }
+
+    //  If object-fit is available via CSS
+    //    and this slide is not a custom slide
+    //    no need to determine orientation
+    if (Modernizr['object-fit'] && !$container.data('resgallery').slides[i].custom) {
+      return false;
     }
 
     var containerRatio = root._calculateAspectRatio($container.width(), $container.height());
@@ -298,7 +298,10 @@ ResGallery
         this.options.contents[customSlide].apply(root.$el, [slide, data, i]) :
         slide;
 
-      slide.custom = true;
+      if (customSlide !== 'image') {
+        slide.custom = true;
+      }
+
     }
 
     this.slides[i] = slide;
